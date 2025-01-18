@@ -1,0 +1,40 @@
+{{- $params := page.Scratch.Get "params" -}}
+{{- $class := .Class | default "" -}}
+{{- $style := "" -}}
+{{- $loading := .Loading | default "lazy" -}}
+{{- $onload := "" -}}
+{{- $onerror := "" -}}
+{{- $cacheRemoteImages := $params.cacheRemoteImages -}}
+{{- $suffixList := slice ".jpeg" ".jpg" ".png" ".gif" ".bmp" ".tif" ".tiff" ".webp" -}}
+
+{{- /* handle for image size */ -}}
+{{- $src := .Src -}}
+{{- $srcSmall := .SrcSmall | default $src -}}
+{{- $srcMedium := $src -}}
+{{- $srcLarge := .SrcLarge | default $src -}}
+
+
+{{- /* set image alt */ -}}
+{{- $alt := .Alt | default $src -}}
+
+{{- /* set image lazy loading */ -}}
+{{- if eq $loading "lazy" -}}
+  {{- $commonScript := "this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}" -}}
+  {{- $onload = printf " onload=\"%vthis.dataset.lazyloaded='';\"" $commonScript | safeHTMLAttr -}}
+  {{- $onerror = printf " onerror=\"%v\"" $commonScript | safeHTMLAttr -}}
+  {{- $style = printf " style=\"%vbackground: url(%v) no-repeat center;\"" $style (resources.Get "/images/loading.svg" | minify).RelPermalink | safeHTMLAttr -}}
+{{- end -}}
+
+<img loading="{{ $loading }}" src="{{ $src | safeURL }}" alt="{{ $alt }}"
+  {{- if .Responsive }} srcset="{{ $srcSmall | safeURL }}, {{ $srcMedium | safeURL }} 1.5x, {{ $srcLarge | safeURL }} 2x" {{- end -}}
+  {{- if eq $loading "lazy" }} data-title="{{ .Title | default $alt }}"
+  {{- else }} title="{{ .Title | default $alt }}"{{- end -}}
+  {{- with .Width }} width="{{ . }}"{{- end -}}
+  {{- with .Height }} height="{{ . }}"{{- end -}}
+  {{- with $class }} class="{{ trim . " " }}"{{- end -}}
+  {{- with .Decoding }} decoding="{{ . }}"{{- end -}}
+  {{- with .Referrerpolicy }} referrerpolicy="{{ . }}"{{- end -}}
+  {{- with $style -}}{{ . }}{{- end -}}
+  {{- with $onload -}}{{ . }}{{- end -}}
+  {{- with $onerror -}}{{ . }}{{- end -}}
+/>
