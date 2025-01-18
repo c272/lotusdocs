@@ -116,6 +116,10 @@
     margin-top: 100px;
 }
 
+.mb-100 {
+    margin-bottom: 100px;
+}
+
 //Feature post placeholder
 .feature-posts-placeholder {
     position: absolute;
@@ -138,6 +142,12 @@
 @media (max-width: 768px) {
     .mt-60 {
         margin-top: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .mb-60 {
+        margin-bottom: 60px;
     }
 }
 
